@@ -47,6 +47,10 @@ from allcasts import AllCasts
 AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Projects/allcasts')
 ```
 
+### Limitations
+
+- Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
+
 ## Todo
 
 - [ ] Add support for downloading multiple podcasts at once.
