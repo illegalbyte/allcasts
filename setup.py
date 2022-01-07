@@ -4,6 +4,12 @@ import pathlib
 # Testpypi install with:
 # pip install -i https://test.pypi.org/pypi/ --extra-index-url https://pypi.org/simple allcasts
 
+# create packages
+# python setup.py sdist bdist_wheel
+
+# upload to PyPi with:
+# twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+
 HERE = pathlib.Path(__file__).parent
 
 README = (HERE / "README.md").read_text()
