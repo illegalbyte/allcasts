@@ -1,8 +1,10 @@
 # allcasts
 
-[![PyPI version](https://badge.fury.io/py/allcasts.svg)](https://badge.fury.io/py/allcasts)
+[![PyPI version](https://badge.fury.io/py/allcasts.svg)](https://pypi.org/project/allcasts/)
 
 A Python package for downloading all available episodes from a podcast RSS feed.
+
+![Demonstration GIF](https://github.com/illegalbyte/allcasts/blob/ea62a2e13a420b44336ac2100023eae7dca69d2a/img/0.1.16_example.gif?raw=true)
 
 ## Installation
 
