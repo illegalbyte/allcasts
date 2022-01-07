@@ -1,1 +1,5 @@
+colorama==0.4.4
+PyInputPlus==0.2.12
+PySimpleValidate==0.2.12
+stdiomask==0.0.6
 xmltodict==0.12.0
