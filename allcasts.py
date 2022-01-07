@@ -1,6 +1,6 @@
 #! python3
 
-from _typeshed import Self
+
 import pyinputplus as pyip
 import colorama as col
 import wget
@@ -12,7 +12,7 @@ import os
 # initialise colorama for Windows
 col.init()
 
-class AllCasts(Self):
+class AllCasts:
 
     def download_podcast(url, directory, filename):
         '''
@@ -44,9 +44,7 @@ class AllCasts(Self):
         if not path.exists(directory):
             print(f"Creating directory {directory}")
             os.makedirs(directory)
-
-    # test url:
-    # https://redscarepodcast.libsyn.com/rss
+            
 
 def main():
     # welcome message
