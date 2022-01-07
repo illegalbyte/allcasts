@@ -1,6 +1,4 @@
 #! python3
-
-
 import pyinputplus as pyip
 import colorama as col
 import wget
@@ -9,7 +7,7 @@ import xmltodict
 from os import path
 import os
 
-# initialise colorama for Windows
+# initialise colorama (required for Windows)
 col.init()
 
 class AllCasts:
@@ -22,17 +20,17 @@ class AllCasts:
         wget.download(url, out=directory, bar=wget.bar_thermometer)
 
 
-    def download_all_podcasts(self, url, directory):
+    def download_all_podcasts(url, directory):
         '''
         download all podcasts from the url and save them to the directory
         '''
-        self.create_directory(directory)
+        AllCasts.create_directory(directory)
         XML = urllib.request.urlopen(url).read()
         podcast_dict = xmltodict.parse(XML)
         for item in podcast_dict['rss']['channel']['item']:
             podcast_title = item['title']
             file_name = f"{podcast_title}.mp3"
-            self.download_podcast(item['enclosure']['@url'], directory, file_name)
+            AllCasts.download_podcast(item['enclosure']['@url'], directory, file_name)
             print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
         print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
 
@@ -52,7 +50,7 @@ def main():
     print(f"{col.Fore.BLUE} ========= Welcome to the AllCasts App! ========{col.Fore.RESET}")
     print("==========================================================")
     # prompt the user for the url
-    pod_url = pyip.inputURL(prompt='Please enter the URL of the podcast feed you want to download: ')
+    pod_url = pyip.inputURL(prompt=f'Please enter the URL of the podcast feed you want to download: ')
     # prompt the user for the directory
     download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
     # if the user didn't enter a directory, use the current directory
