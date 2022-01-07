@@ -48,9 +48,9 @@ class AllCasts:
 
 def main():
     # welcome message
-    print(f"{col.Fore.BLUE}Welcome to the AllCasts App!{col.Fore.RESET}")
+    print(f"{col.Fore.RED}Welcome to the AllCasts App! 📡{col.Fore.RESET}")
     # prompt the user for the url
-    pod_url = pyip.inputURL(prompt='Please enter the URL of the podcast you want to download: ')
+    pod_url = pyip.inputURL(prompt='Please enter the URL of the podcast feed you want to download: ')
     # prompt the user for the directory
     download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
     # if the user didn't enter a directory, use the current directory

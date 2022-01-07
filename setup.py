@@ -1,10 +1,12 @@
 from setuptools import setup, find_packages
 import pathlib
 
+# pip install -i https://test.pypi.org/pypi/ --extra-index-url https://pypi.org/simple allcasts
+
 HERE = pathlib.Path(__file__).parent
 
 README = (HERE / "README.md").read_text()
-VERSION = '0.1.0'
+VERSION = '0.1.4'
 
 setup(
         name='allcasts',    # This is the name of your PyPI-package.
@@ -15,7 +17,7 @@ setup(
         long_description_content_type="text/markdown",
         url="https://github.com/illegalbyte/allcasts",   # Provide either the link to your github or to your website
         author="Lewis Gentle",
-        install_requires=["pyinputplus", "wget", "xmltodict", "colorama", "urllib", "os"],
+        install_requires=["PyInputPlus", "wget", "xmltodict", "colorama"],
         classifiers=[
             # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
             'Development Status :: 3 - Alpha',
@@ -23,10 +25,13 @@ setup(
             'Topic :: Utilities', # Define the topic of your package
             'License :: OSI Approved :: MIT License',   # Again, pick a license
             'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
-            'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
         ],
-        packages=find_packages(exclude=['test']),
+        packages=find_packages(exclude=['tests']),
         include_package_data=True,
+        entry_points = {
+        'console_scripts': ['allcasts=allcasts.allcasts:main'],
+    }
 )
 
