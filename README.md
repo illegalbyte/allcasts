@@ -1,4 +1,4 @@
-# allcasts
+# allcasts 📻 🗃
 
 [![PyPI version](https://badge.fury.io/py/allcasts.svg)](https://pypi.org/project/allcasts/)
 
