@@ -1,5 +1,7 @@
 # allcasts
 
+[![PyPI version](https://badge.fury.io/py/allcasts.svg)](https://badge.fury.io/py/allcasts)
+
 A Python package for downloading all available episodes from a podcast RSS feed.
 
 ## Installation
@@ -51,3 +53,4 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 
 <!-- https://realpython.com/pypi-publish-python-package/ -->
 <!-- $ bumpversion --current-version 1.0.0 minor setup.py reader/__init__.py -->
+<!-- https://python-packaging.readthedocs.io/en/latest/minimal.html -->
