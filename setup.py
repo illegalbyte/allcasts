@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
 import pathlib
 
+# Testpypi install with:
 # pip install -i https://test.pypi.org/pypi/ --extra-index-url https://pypi.org/simple allcasts
 
 HERE = pathlib.Path(__file__).parent
 
 README = (HERE / "README.md").read_text()
-VERSION = '0.1.4'
+VERSION = '0.1.6'
 
 setup(
         name='allcasts',    # This is the name of your PyPI-package.
