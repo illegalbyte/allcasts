@@ -9,6 +9,7 @@ import colorama as col
 import pyinputplus as pyip
 import wget
 import xmltodict
+from pprint import pprint
 
 # initialise colorama (required for Windows)
 col.init()
@@ -38,13 +39,26 @@ class AllCasts:
 		'''
 		download a range of podcast episodes from a given rss feed url and save them to the directory
 		'''
+		# BUG: if the start number is greater than the end number, the program will not download the episodes
+		# BUG: the function doesn't work and downloads all episodes
+		print(f"Downloading episodes {col.Fore.GREEN}{start_number}{col.Fore.RESET} to {col.Fore.GREEN}{end_number}{col.Fore.RESET}...")
 		podcast_dict = AllCasts.podcast_dict(feed_url)
-		for item in podcast_dict['rss']['channel']['item'][start_number:end_number]:
-			podcast_title = item['title']
+
+		# create a list of the podcast episodes
+		podcast_episodes = podcast_dict['rss']['channel']['item']
+		# reverse list of episodes so that the newest episodes are downloaded first
+		podcast_episodes.reverse()
+
+		# swap values of start and end numbers if the start number is greater than the end number
+		if start_number > end_number:
+			start_number, end_number = end_number, start_number
+
+		for episode in podcast_episodes[start_number-1:end_number]:
+			podcast_title = episode['title']
 			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_podcast(item['enclosure']['@url'], directory, file_name)
+			AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
 			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
-		print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
+		print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
 	def download_podcast(episode_url, directory, filename):
 		'''
@@ -87,7 +101,7 @@ def main():
 		# create the parser
 		parser = argparse.ArgumentParser(description="Download podcasts from their RSS feed")
 		exclusive_group = parser.add_mutually_exclusive_group()
-		# add the arguments
+		# define the arguments
 		parser.add_argument("-d", "--directory", help="the directory to save the podcast episodes", required=False, type=str, metavar="<DIRECTORY>")
 		parser.add_argument("-f", "--feed", help="the url of the podcast feed", required=True, type=str, metavar="<URL>")
 		parser.add_argument("-s", "--start", help="the number of the first episode to download", type=int, metavar="<NUMBER>")
@@ -102,9 +116,10 @@ def main():
 				sys.exit()
 			else:
 				directory = args.directory
-		# if no directory is specified, use the current working directory
 		else:
+		# if no directory is specified, use the current working directory
 			directory = os.getcwd()
+
 		if args.all:
 			AllCasts.download_all_podcasts(args.feed, directory)
 		elif args.start and args.end:
