@@ -1,11 +1,13 @@
 #! python3
-import pyinputplus as pyip
-import colorama as col
-import wget
-import urllib
-import xmltodict
-from os import path
 import os
+import urllib
+from os import path
+
+import argparse
+import colorama as col
+import pyinputplus as pyip
+import wget
+import xmltodict
 
 # initialise colorama (required for Windows)
 col.init()

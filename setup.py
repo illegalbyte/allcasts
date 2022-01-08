@@ -13,7 +13,8 @@ import pathlib
 HERE = pathlib.Path(__file__).parent
 
 README = (HERE / "README.md").read_text()
-VERSION = '0.1.6'
+VERSION = '0.2.0'
+REQUIREMENTS = ["PyInputPlus", "wget", "xmltodict", "colorama", "argparse"]
 
 setup(
         name='allcasts',    # This is the name of your PyPI-package.
@@ -24,7 +25,7 @@ setup(
         long_description_content_type="text/markdown",
         url="https://github.com/illegalbyte/allcasts",   # Provide either the link to your github or to your website
         author="Lewis Gentle",
-        install_requires=["PyInputPlus", "wget", "xmltodict", "colorama"],
+        install_requires= REQUIREMENTS,
         classifiers=[
             # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
             'Development Status :: 3 - Alpha',
