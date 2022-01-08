@@ -39,26 +39,32 @@ class AllCasts:
 		'''
 		download a range of podcast episodes from a given rss feed url and save them to the directory
 		'''
-		# BUG: if the start number is greater than the end number, the program will not download the episodes
-		# BUG: the function doesn't work and downloads all episodes
 		print(f"Downloading episodes {col.Fore.GREEN}{start_number}{col.Fore.RESET} to {col.Fore.GREEN}{end_number}{col.Fore.RESET}...")
 		podcast_dict = AllCasts.podcast_dict(feed_url)
-
-		# create a list of the podcast episodes
-		podcast_episodes = podcast_dict['rss']['channel']['item']
-		# reverse list of episodes so that the newest episodes are downloaded first
-		podcast_episodes.reverse()
-
 		# swap values of start and end numbers if the start number is greater than the end number
 		if start_number > end_number:
 			start_number, end_number = end_number, start_number
-
-		for episode in podcast_episodes[start_number-1:end_number]:
-			podcast_title = episode['title']
-			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
-			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
-		print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
+		# create a list of the podcast episodes
+		all_podcast_episodes = podcast_dict['rss']['channel']['item']
+		# reverse list of episodes so that the oldest episodes are downloaded first
+		all_podcast_episodes.reverse()
+		# if the podcast has episode tags, use those to download the episode range
+		if 'itunes:episode' in podcast_dict['rss']['channel']['item'][0]:
+			for episode in all_podcast_episodes[:]:
+				podcast_title = episode['title']
+				file_name = f"{podcast_title}.mp3"
+				episode_number = int(episode['itunes:episode'])
+				if episode_number >= start_number and episode_number <= end_number:
+					AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
+					print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+		# if no episode tags are present, download episodes based on their order in the feed
+		else:
+			for episode in all_podcast_episodes[start_number-1:end_number]:
+				podcast_title = episode['title']
+				file_name = f"{podcast_title}.mp3"
+				AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
+				print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
 	def download_podcast(episode_url, directory, filename):
 		'''
@@ -106,6 +112,9 @@ def main():
 		parser.add_argument("-s", "--start", help="the number of the first episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-e", "--end", help="the number of the last episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-a", "--all", help="download all episodes", action="store_true", required=False)
+		parser.add_argument("-n", "--number", help="download a specific episode", type=int, metavar="<NUMBER>")
+		parser.add_argument("-l", "--latest", help="download the latest episode", action="store_true", required=False)
+		parser.add_argument("-v", "--version", help="display the version number", action="store_true", required=False)
 		args = parser.parse_args()
 
 		# check if the directory argument is valid
@@ -123,8 +132,8 @@ def main():
 			AllCasts.download_all_podcasts(args.feed, directory)
 		elif args.start and args.end:
 			AllCasts.download_episode_range(args.feed, directory, args.start, args.end)
-		elif args.start:
-			AllCasts.download_episode(args.feed, directory, args.start)
+		elif args.number:
+			AllCasts.download_episode_range(args.feed, directory, args.number, args.number)
 		else:
 			print(f"{col.Fore.RED}ERROR: You must specify either --all, --start, or --end{col.Fore.RESET}")
 			sys.exit()
