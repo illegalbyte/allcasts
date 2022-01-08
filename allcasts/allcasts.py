@@ -99,8 +99,7 @@ def main():
 	# if arguments are passed, parse them:
 	if len(sys.argv) > 1:
 		# create the parser
-		parser = argparse.ArgumentParser(description="Download podcasts from their RSS feed")
-		exclusive_group = parser.add_mutually_exclusive_group()
+		parser = argparse.ArgumentParser(description="A friendly command line podcast downloader - supports downloading entire feeds, individual episodes, and a range of episodes")
 		# define the arguments
 		parser.add_argument("-d", "--directory", help="the directory to save the podcast episodes", required=False, type=str, metavar="<DIRECTORY>")
 		parser.add_argument("-f", "--feed", help="the url of the podcast feed", required=True, type=str, metavar="<URL>")
