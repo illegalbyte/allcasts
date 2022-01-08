@@ -51,7 +51,6 @@ class AllCasts:
 		wget.download(episode_url, out=directory, bar=wget.bar_thermometer)
 		# TODO: rename files to the title of the podcast episode with datestamp
 
-
 	def download_all_podcasts(feed_url, directory):
 		'''
 		download all podcasts from the rss feed url and save them to the directory
@@ -64,7 +63,6 @@ class AllCasts:
 			AllCasts.download_podcast(item['enclosure']['@url'], directory, file_name)
 			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
 		print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
-
 
 	def create_directory(directory):
 		'''
