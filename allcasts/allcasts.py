@@ -12,22 +12,22 @@ col.init()
 
 class AllCasts:
 
-	def download_podcast(url, directory, filename):
+	def download_podcast(episode_url, directory, filename):
 		'''
-		download the podcast episode from the url and save it to the directory
+		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
 		'''	
-		print(f"Downloading {url}")
-		wget.download(url, out=directory, bar=wget.bar_thermometer)
+		print(f"Downloading {episode_url}...")
+		wget.download(episode_url, out=directory, bar=wget.bar_thermometer)
+		# TODO: rename files to the title of the podcast episode with datestamp
 
 
-	def download_all_podcasts(url, directory):
+	def download_all_podcasts(feed_url, directory):
 		'''
-		download all podcasts from the url and save them to the directory
+		download all podcasts from the rss feed url and save them to the directory
 		'''
 		# create the directory if it doesn't exist
-		if not path.exists(directory):
-			AllCasts.create_directory(directory)
-		XML = urllib.request.urlopen(url).read()
+		AllCasts.create_directory(directory)
+		XML = urllib.request.urlopen(feed_url).read()
 		podcast_dict = xmltodict.parse(XML)
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
