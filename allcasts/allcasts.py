@@ -12,6 +12,37 @@ col.init()
 
 class AllCasts:
 
+	def podcast_dict(url):
+		'''
+		returns a dictionary of the podcast feed
+		'''
+		with urllib.request.urlopen(url) as response:
+			podcast_dict = xmltodict.parse(response.read())
+		return podcast_dict
+
+	def download_episode(feed_url, directory, episode_number):
+		'''
+		download a specific podcast episode from the rss feed url and save it to the directory
+		'''
+		podcast_dict = AllCasts.podcast_dict(feed_url)
+		episode_title = podcast_dict['rss']['channel']['item'][episode_number]['title']
+		file_name = f"{episode_title}.mp3"
+		AllCasts.download_podcast(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)
+		print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
+		print(f"\n{col.Fore.BLUE}--> 🎉 Podcast downloaded!{col.Fore.RESET}")
+
+	def download_episode_range(feed_url, directory, start_number, end_number):
+		'''
+		download a range of podcast episodes from a given rss feed url and save them to the directory
+		'''
+		podcast_dict = AllCasts.podcast_dict(feed_url)
+		for item in podcast_dict['rss']['channel']['item'][start_number:end_number]:
+			podcast_title = item['title']
+			file_name = f"{podcast_title}.mp3"
+			AllCasts.download_podcast(item['enclosure']['@url'], directory, file_name)
+			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+		print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
+
 	def download_podcast(episode_url, directory, filename):
 		'''
 		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
@@ -26,9 +57,7 @@ class AllCasts:
 		download all podcasts from the rss feed url and save them to the directory
 		'''
 		# create the directory if it doesn't exist
-		AllCasts.create_directory(directory)
-		XML = urllib.request.urlopen(feed_url).read()
-		podcast_dict = xmltodict.parse(XML)
+		podcast_dict = AllCasts.podcast_dict(feed_url)
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
 			file_name = f"{podcast_title}.mp3"
