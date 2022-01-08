@@ -2,6 +2,7 @@
 import os
 import urllib
 from os import path
+import sys
 
 import argparse
 import colorama as col
@@ -76,22 +77,66 @@ class AllCasts:
 			
 
 def main():
-	# welcome message
-	print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
-	print(f"{col.Fore.BLUE} ========= Welcome to the AllCasts App! ========{col.Fore.RESET}")
-	print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
-	# prompt the user for the url
-	pod_url = pyip.inputURL(prompt=f'Please enter the URL of the podcast feed you want to download: ')
-	# prompt the user for the directory
-	download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
-	# if the user didn't enter a directory, use the current directory
-	if download_dir == '' or download_dir == '.':
-		download_dir = path.abspath('.')
-	# inform the user the downloads will begin
-	print(f"Downloading all podcasts from {pod_url} to {download_dir}")
-	# download the podcast
-	AllCasts.download_all_podcasts(pod_url, download_dir)
-	
+	'''
+	The main function will check for arguments, validate them, and call the appropriate function 
+	OR if no arguments are passed, it will prompt the user for the required information
+	'''
+
+	# if arguments are passed, parse them:
+	if len(sys.argv) > 1:
+		# create the parser
+		parser = argparse.ArgumentParser(description="Download podcasts from their RSS feed")
+		exclusive_group = parser.add_mutually_exclusive_group()
+		# add the arguments
+		parser.add_argument("-d", "--directory", help="the directory to save the podcast episodes", required=False, type=str, metavar="<DIRECTORY>")
+		parser.add_argument("-f", "--feed", help="the url of the podcast feed", required=True, type=str, metavar="<URL>")
+		parser.add_argument("-s", "--start", help="the number of the first episode to download", type=int, metavar="<NUMBER>")
+		parser.add_argument("-e", "--end", help="the number of the last episode to download", type=int, metavar="<NUMBER>")
+		parser.add_argument("-a", "--all", help="download all episodes", action="store_true", required=False)
+		args = parser.parse_args()
+
+		# check if the directory argument is valid
+		if args.directory:
+			if not path.isdir(args.directory):
+				print(f"{col.Fore.RED}ERROR: The directory {args.directory} does not exist.{col.Fore.RESET}")
+				sys.exit()
+			else:
+				directory = args.directory
+		# if no directory is specified, use the current working directory
+		else:
+			directory = os.getcwd()
+		if args.all:
+			AllCasts.download_all_podcasts(args.feed, directory)
+		elif args.start and args.end:
+			AllCasts.download_episode_range(args.feed, directory, args.start, args.end)
+		elif args.start:
+			AllCasts.download_episode(args.feed, directory, args.start)
+		else:
+			print(f"{col.Fore.RED}ERROR: You must specify either --all, --start, or --end{col.Fore.RESET}")
+			sys.exit()
+
+
+	# if no arguments are passed, prompt the user for the required information
+	else:
+		# display welcome message
+		print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
+		print(f"{col.Fore.BLUE} ========= Welcome to the AllCasts App! ========{col.Fore.RESET}")
+		print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
+		# prompt the user for the url
+		pod_url = pyip.inputURL(prompt=f'Please enter the URL of the podcast feed you want to download: ')
+		# prompt the user for the directory
+		download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
+		# if the user didn't enter a directory, use the current directory
+		if download_dir == '' or download_dir == '.':
+			download_dir = path.abspath('.')
+		# inform the user the downloads will begin
+		print(f"Downloading all podcasts from {pod_url} to {download_dir}")
+		# download the podcast
+		try:
+			AllCasts.download_all_podcasts(pod_url, download_dir)
+		except KeyboardInterrupt:
+			sys.exit()
+		sys.exit()
 
 if __name__ == '__main__':
 	main()
