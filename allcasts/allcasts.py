@@ -1,4 +1,11 @@
 #! python3
+'''allcasts – A friendly command line podcast downloader
+
+allcasts allows you to batch download podcasts from a given RSS feed.
+allcasts can download all episodes, a range of episodes, or a specific episode.
+Get started by running allcasts with no arguments or with the --help argument.
+'''
+__version__ = '0.1.6'
 import os
 import urllib
 from os import path
@@ -134,6 +141,8 @@ def main():
 			AllCasts.download_episode_range(args.feed, directory, args.start, args.end)
 		elif args.number:
 			AllCasts.download_episode_range(args.feed, directory, args.number, args.number)
+		elif args.version:
+			print(f"{col.Fore.BLUE}AllCasts v {col.Fore.RESET}")
 		else:
 			print(f"{col.Fore.RED}ERROR: You must specify either --all, --start, or --end{col.Fore.RESET}")
 			sys.exit()
