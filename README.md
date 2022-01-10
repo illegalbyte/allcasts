@@ -94,12 +94,12 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 ### Limitations
 
 - Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
-- Downloading a range of podcast episodes (eg 100 to 120) will rely on each post in the feed being an episode – this can be fixed by moving to using itunes episodes tags first, and if they are unavailable, then fall back to sorting the feed's episodes chronologically
+
 
 ## Todo
 
 - [ ] Add support for downloading multiple podcasts at once.
-- [ ] Add support for command line arguments.
+- [X] Add support for command line arguments.
 - [ ] Add itunes API support to search for podcasts and select the correct feed.
 
 <!-- https://realpython.com/pypi-publish-python-package/ -->
