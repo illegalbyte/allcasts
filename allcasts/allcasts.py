@@ -102,7 +102,15 @@ class AllCasts:
 		if not path.exists(directory):
 			print(f"Creating directory {directory}")
 			os.makedirs(directory)
-			
+
+	def download_all_podcasts_from_file(file_path, directory):
+		'''
+		download all podcasts from a text file and save them to the directory
+		'''
+		with open(file_path, 'r') as file:
+			for line in file:
+				AllCasts.download_all_podcasts(line, directory)
+
 	def itunes_search_cli():
 		'''
 		promt the user to search for a podcast, choose from the results and return the URL
@@ -144,9 +152,9 @@ def main():
 		parser.add_argument("-v", "--version", help="display the version number", action="store_true", required=False)
 		parser.add_argument("-i", "--input", help="the input file containing a list of podcast feeds", type=str, metavar="<FILE>")
 		args = parser.parse_args()
-		# check if the directory argument is valid
 		if args.directory:
 			if not path.isdir(args.directory):
+			# check if the directory argument is valid
 				print(f"{col.Fore.RED}ERROR: The directory {args.directory} does not exist.{col.Fore.RESET}")
 				sys.exit()
 			else:
@@ -162,6 +170,8 @@ def main():
 			AllCasts.download_episode_range(args.feed, directory, args.number, args.number)
 		elif args.version:
 			print(f"{col.Fore.BLUE}AllCasts v {col.Fore.RESET}")
+		elif args.input:
+			AllCasts.download_all_podcasts_from_file(args.input, directory)
 		else:
 			print(f"{col.Fore.RED}ERROR: You must specify either --all, --start, or --end{col.Fore.RESET}")
 			sys.exit()
