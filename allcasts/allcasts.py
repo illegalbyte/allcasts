@@ -17,6 +17,7 @@ import pyinputplus as pyip
 import wget
 import xmltodict
 from pprint import pprint
+from itunes_API import ItunesAPI
 
 # initialise colorama (required for Windows)
 col.init()
@@ -102,6 +103,25 @@ class AllCasts:
 			print(f"Creating directory {directory}")
 			os.makedirs(directory)
 			
+	def itunes_search_cli():
+		'''
+		promt the user to search for a podcast, choose from the results and return the URL
+		'''
+		search_term = pyip.inputStr(prompt='Search for a podcast: ')
+		# strip whitespace from search term, concatenate each word with '+'
+		search_term = '+'.join(search_term.split())
+		# search for the podcast
+		results = ItunesAPI.podcast_search(search_term)
+		if results:
+			print(f"\n{col.Fore.BLUE}--> Search results: {col.Fore.RESET}")
+			for i, result in enumerate(results):
+				print(f"{col.Fore.GREEN}{i+1}{col.Fore.RESET}. {result['trackName']}")
+			print(f"{col.Fore.BLUE}--> Choose a podcast from the list above: {col.Fore.RESET}")
+			podcast_number = pyip.inputInt(prompt='', min=1, max=len(results))
+			return results[podcast_number-1]['feedUrl']
+		else:
+			print(f"\n{col.Fore.RED}Error: No podcasts found!{col.Fore.RESET}")
+			sys.exit(1)
 
 def main():
 	'''
@@ -122,8 +142,8 @@ def main():
 		parser.add_argument("-n", "--number", help="download a specific episode", type=int, metavar="<NUMBER>")
 		parser.add_argument("-l", "--latest", help="download the latest episode", action="store_true", required=False)
 		parser.add_argument("-v", "--version", help="display the version number", action="store_true", required=False)
+		parser.add_argument("-i", "--input", help="the input file containing a list of podcast feeds", type=str, metavar="<FILE>")
 		args = parser.parse_args()
-
 		# check if the directory argument is valid
 		if args.directory:
 			if not path.isdir(args.directory):
@@ -134,7 +154,6 @@ def main():
 		else:
 		# if no directory is specified, use the current working directory
 			directory = os.getcwd()
-
 		if args.all:
 			AllCasts.download_all_podcasts(args.feed, directory)
 		elif args.start and args.end:
@@ -146,28 +165,42 @@ def main():
 		else:
 			print(f"{col.Fore.RED}ERROR: You must specify either --all, --start, or --end{col.Fore.RESET}")
 			sys.exit()
-
-
-	# if no arguments are passed, prompt the user for the required information
 	else:
+	# if no arguments are passed, prompt the user for the required information
 		# display welcome message
 		print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
 		print(f"{col.Fore.BLUE} ========= Welcome to the AllCasts App! ========{col.Fore.RESET}")
 		print(f"{col.Fore.RED}=========================================================={col.Fore.RESET}")
-		# prompt the user for the url
-		pod_url = pyip.inputURL(prompt=f'Please enter the URL of the podcast feed you want to download: ')
-		# prompt the user for the directory
-		download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
-		# if the user didn't enter a directory, use the current directory
-		if download_dir == '' or download_dir == '.':
-			download_dir = path.abspath('.')
-		# inform the user the downloads will begin
-		print(f"Downloading all podcasts from {pod_url} to {download_dir}")
-		# download the podcast
-		try:
-			AllCasts.download_all_podcasts(pod_url, download_dir)
-		except KeyboardInterrupt:
-			sys.exit()
+		# ask if they want to search for a podcast
+		mode = pyip.inputMenu(choices=['Search for a podcast','Enter URL', 'Quit'], prompt='Which would you like to do?\n', numbered=True)
+		if mode == 'Search for a podcast':
+			# if they want to search for a podcast, prompt the user
+			feed_url = AllCasts.itunes_search_cli()
+			download_mode = pyip.inputMenu(choices=['Download all episodes', 'Download a specific episode', 'Download an episode range', 'Quit'], prompt='Which would you like to do?\n', numbered=True)
+			if download_mode == 'Download all episodes':
+				AllCasts.download_all_podcasts(feed_url, os.getcwd())
+			elif download_mode == 'Download a specific episode':
+				episode_number = pyip.inputInt(prompt='Enter the episode number: ')
+				AllCasts.download_episode_range(feed_url, os.getcwd(), episode_number, episode_number)
+			elif download_mode == 'Download an episode range':
+				start_episode = pyip.inputInt(prompt='Enter the first episode number: ')
+				end_episode = pyip.inputInt(prompt='Enter the last episode number: ')
+				AllCasts.download_episode_range(feed_url, os.getcwd(), start_episode, end_episode)
+		elif mode == 'Enter URL':
+			# prompt the user for the url
+			pod_url = pyip.inputURL(prompt=f'Please enter the URL of the podcast feed you want to download: ')
+			# prompt the user for the directory
+			download_dir = pyip.inputFilepath(prompt='Please enter the directory you want to download the podcast to [leave blank for current dir]: ', blank=True)
+			# if the user didn't enter a directory, use the current directory
+			if download_dir == '' or download_dir == '.':
+				download_dir = path.abspath('.')
+			# inform the user the downloads will begin
+			print(f"Downloading all podcasts from {pod_url} to {download_dir}")
+			# download the podcast
+			try:
+				AllCasts.download_all_podcasts(pod_url, download_dir)
+			except KeyboardInterrupt:
+				sys.exit()
 		sys.exit()
 
 if __name__ == '__main__':
