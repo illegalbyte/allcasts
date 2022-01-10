@@ -100,7 +100,7 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 
 - [ ] Add support for downloading multiple podcasts at once.
 - [X] Add support for command line arguments.
-- [ ] Add itunes API support to search for podcasts and select the correct feed.
+- [X] Add itunes API support to search for podcasts and select the correct feed.
 
 <!-- https://realpython.com/pypi-publish-python-package/ -->
 <!-- $ bumpversion --current-version 1.0.0 minor setup.py reader/__init__.py -->
