@@ -130,3 +130,4 @@ dmypy.json
 .DS_Store
 patreon_feed
 rss.xml
+*.mp3
