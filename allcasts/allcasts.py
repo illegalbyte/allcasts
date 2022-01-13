@@ -55,10 +55,10 @@ class AllCasts:
 		# create a list of the podcast episodes
 		all_podcast_episodes = podcast_dict['rss']['channel']['item']
 		# reverse list of episodes so that the oldest episodes are downloaded first
-		# all_podcast_episodes.reverse()
+		all_podcast_episodes.reverse()
 		# if the podcast has episode tags, use those to download the episode range
 		if 'itunes:episode' in podcast_dict['rss']['channel']['item'][0]:
-			for episode in all_podcast_episodes[~0:0]:
+			for episode in all_podcast_episodes[start_number-1:end_number]:
 				podcast_title = episode['title']
 				file_name = f"{podcast_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
