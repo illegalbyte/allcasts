@@ -141,16 +141,17 @@ def main():
 	if len(sys.argv) > 1:
 		# create the parser
 		parser = argparse.ArgumentParser(description="A friendly command line podcast downloader - supports downloading entire feeds, individual episodes, and a range of episodes")
+		mutually_exclusive = parser.add_mutually_exclusive_group(required=True)
 		# define the arguments
+		mutually_exclusive.add_argument("-f", "--feed", help="the url of the podcast feed", type=str, metavar="<URL>")
+		mutually_exclusive.add_argument("-i", "--input", help="the input file containing a list of podcast feeds", type=str, metavar="<FILE>")
 		parser.add_argument("-d", "--directory", help="the directory to save the podcast episodes", required=False, type=str, metavar="<DIRECTORY>")
-		parser.add_argument("-f", "--feed", help="the url of the podcast feed", required=True, type=str, metavar="<URL>")
 		parser.add_argument("-s", "--start", help="the number of the first episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-e", "--end", help="the number of the last episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-a", "--all", help="download all episodes", action="store_true", required=False)
 		parser.add_argument("-n", "--number", help="download a specific episode", type=int, metavar="<NUMBER>")
 		parser.add_argument("-l", "--latest", help="download the latest episode", action="store_true", required=False)
 		parser.add_argument("-v", "--version", help="display the version number", action="store_true", required=False)
-		parser.add_argument("-i", "--input", help="the input file containing a list of podcast feeds", type=str, metavar="<FILE>")
 		args = parser.parse_args()
 		if args.directory:
 			if not path.isdir(args.directory):
@@ -159,8 +160,8 @@ def main():
 				sys.exit()
 			else:
 				directory = args.directory
-		else:
 		# if no directory is specified, use the current working directory
+		else:
 			directory = os.getcwd()
 		if args.all:
 			AllCasts.download_all_podcasts(args.feed, directory)
