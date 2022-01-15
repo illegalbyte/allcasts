@@ -18,6 +18,7 @@ import wget
 import xmltodict
 from pprint import pprint
 from itunes_API import ItunesAPI
+from transcribe import transcribe
 
 # initialise colorama (required for Windows)
 col.init()
@@ -39,7 +40,7 @@ class AllCasts:
 		podcast_dict = AllCasts.podcast_dict(feed_url)
 		episode_title = podcast_dict['rss']['channel']['item'][episode_number]['title']
 		file_name = f"{episode_title}.mp3"
-		AllCasts.download_podcast(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)
+		AllCasts.download_podcast(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
 		print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		print(f"\n{col.Fore.BLUE}--> 🎉 Podcast downloaded!{col.Fore.RESET}")
 
@@ -59,19 +60,29 @@ class AllCasts:
 		# if the podcast has episode tags, use those to download the episode range
 		if 'itunes:episode' in podcast_dict['rss']['channel']['item'][0]:
 			for episode in all_podcast_episodes[start_number-1:end_number]:
-				podcast_title = episode['title']
-				file_name = f"{podcast_title}.mp3"
+				episode_title = episode['title']
+				file_name = f"{episode_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
 				if episode_number >= start_number and episode_number <= end_number:
 					AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
-					print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+					print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		# if no episode tags are present, download episodes based on their order in the feed
 		else:
 			for episode in all_podcast_episodes[start_number-1:end_number]:
-				podcast_title = episode['title']
-				file_name = f"{podcast_title}.mp3"
+				episode_title = episode['title']
+				file_name = f"{episode_title}.mp3"
+				file_name = episode['enclosure']['@url'].split('/')[-1]
+				# remove all text after '?' in the filename
+				file_name = file_name.split('?')[0]
 				AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
-				print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
+				# transcribe the podcast episode
+				transcribed_text = transcribe(path.join(directory, file_name))
+				# create new text file with the transcribed text
+				transcribed_file = open(path.join(directory, f"{file_name}.txt"), "w")
+				transcribed_file.write(transcribed_text)
+				transcribed_file.close()
+
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
 	def download_podcast(episode_url, directory, filename):

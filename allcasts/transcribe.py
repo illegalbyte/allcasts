@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 
+import os
 import speech_recognition as sr
 
-def transcribe(audio_file):
-    # obtain path to "english.wav" in the same folder as this script
-    from os import path
-    AUDIO_FILE = path.join(audio_file)
+
+
+def transcribe(audio_file) -> str:
+    print('Transcribing...')
+
+    AUDIO_FILE = audio_file
+    # get last part of file name
+    AUDIO_FILE_NAME = AUDIO_FILE.split('/')[-1][:-4]
+    # check if file is not .wav
+    if not AUDIO_FILE.endswith('.wav'):
+        # convert to .wav
+        # TODO: FIX SECURITY VULNERABILITY FROM STRING INTERPOLATION HERE
+        os.system(f'ffmpeg -i {audio_file} -ar 16000 -ac 1 {AUDIO_FILE_NAME}.wav')
+        AUDIO_FILE = f'{AUDIO_FILE_NAME}.wav'
 
     # use the audio file as the audio source
     r = sr.Recognizer()
@@ -14,12 +25,15 @@ def transcribe(audio_file):
 
     # recognize speech using Sphinx
     try:
-        print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+        print('Transcription successful!')
+        return r.recognize_sphinx(audio, language="en-US")
     except sr.UnknownValueError:
-        print("Sphinx could not understand audio")
+        print("ERROR: Sphinx could not understand audio")
     except sr.RequestError as e:
         print("Sphinx error; {0}".format(e))
 
+# OTHER TRANSCRIBERS:
+'''
     # recognize speech using Google Speech Recognition
     try:
         # for testing purposes, we're just using the default API key
@@ -86,3 +100,4 @@ def transcribe(audio_file):
         print("IBM Speech to Text could not understand audio")
     except sr.RequestError as e:
         print("Could not request results from IBM Speech to Text service; {0}".format(e))
+'''
