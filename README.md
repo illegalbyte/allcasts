@@ -98,6 +98,7 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 
 ## Todo
 
+- [ ] Add audio transcription using [speech_recognition module](https://github.com/Uberi/speech_recognition)
 - [X] Add support for downloading multiple podcasts at once.
 - [X] Add support for command line arguments.
 - [X] Add itunes API support to search for podcasts and select the correct feed.
