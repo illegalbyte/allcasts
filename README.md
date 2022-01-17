@@ -41,17 +41,20 @@ Downloading https://traffic.libsyn.com/atpfm/atp461.mp3
 
 Allcasts supports a variety of command line arguments. To display help message below use `allcasts -h`
 
-```
-usage: allcasts.py [-h] [-d <DIRECTORY>] -f <URL> [-s <NUMBER>] [-e <NUMBER>] [-a] [-n <NUMBER>]
+```bash
+usage: allcasts.py [-h] (-f <URL> | -i <FILE>) [-d <DIRECTORY>] [-t] [-s <NUMBER>] [-e <NUMBER>] [-a] [-n <NUMBER>] [-l] [-v]
 
 A friendly command line podcast downloader - supports downloading entire feeds, individual episodes, and a range of episodes
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d <DIRECTORY>, --directory <DIRECTORY>
-                        the directory to save the podcast episodes
   -f <URL>, --feed <URL>
                         the url of the podcast feed
+  -i <FILE>, --input <FILE>
+                        the input file containing a list of podcast feeds
+  -d <DIRECTORY>, --directory <DIRECTORY>
+                        the directory to save the podcast episodes
+  -t, --transcribe      transcribe the podcast episodes to text
   -s <NUMBER>, --start <NUMBER>
                         the number of the first episode to download
   -e <NUMBER>, --end <NUMBER>
@@ -59,6 +62,8 @@ optional arguments:
   -a, --all             download all episodes
   -n <NUMBER>, --number <NUMBER>
                         download a specific episode
+  -l, --latest          download the latest episode
+  -v, --version         display the version number
 ```
 
 #### Example Commands: 
