@@ -34,7 +34,7 @@ class TestAllCasts(unittest.TestCase):
 		allcasts should be able to download entire feed
 		'''
 		from allcasts import AllCasts
-		AllCasts.download_podcast("https://traffic.libsyn.com/atpfm/atp464.mp3",
+		AllCasts.download_episodes("https://traffic.libsyn.com/atpfm/atp464.mp3",
 		                          directory='.', filename='atp464.mp3')
 		self.assertTrue(os.path.exists('atp464.mp3'))
 		os.remove('atp464.mp3')
