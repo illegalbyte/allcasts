@@ -1,5 +1,5 @@
 #! python3
-'''allcasts – A friendly command line podcast downloader
+'''allcasts - A friendly command line podcast downloader
 
 allcasts allows you to batch download podcasts from a given RSS feed.
 allcasts can download all episodes, a range of episodes, or a specific episode.
