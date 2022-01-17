@@ -66,24 +66,36 @@ optional arguments:
   -v, --version         display the version number
 ```
 
-#### Example Commands: 
+#### Example Commands
 
-**Download episodes 100 to 120**
+* **Download episodes 100 to 120**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -s 100 -e 120
 ```
 
-**Download all episodes of a podcast**
+* **Download all episodes of a podcast**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -a
 ```
 
-**Download episode 200**
+* **Download episode 200**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -n 100
+```
+
+* **Download a list of RSS feeds**
+
+```bash
+allcasts -i "podcast_feeds.txt"
+```
+
+* **Transcribe downloaded episodes to a txt file for keyword searching**
+
+```bash
+allcasts -f "https://atp.fm/rss" -t
 ```
 
 ### As a Python module
@@ -98,15 +110,15 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 
 ### Limitations
 
-- Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
-
+* Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
 
 ## Todo
 
-- [ ] Add audio transcription using [speech_recognition module](https://github.com/Uberi/speech_recognition)
-- [X] Add support for downloading multiple podcasts at once.
-- [X] Add support for command line arguments.
-- [X] Add itunes API support to search for podcasts and select the correct feed.
+* [X] Add audio transcription using [speech_recognition module](https://github.com/Uberi/speech_recognition)
+* [ ] Add support for private [Patreon RSS feeds](https://www.patreon.com/posts/podcast-feed-for-patrons-on-patreon)
+* [X] Add support for downloading multiple podcasts at once.
+* [X] Add support for command line arguments.
+* [X] Add itunes API support to search for podcasts and select the correct feed.
 
 <!-- https://realpython.com/pypi-publish-python-package/ -->
 <!-- $ bumpversion --current-version 1.0.0 minor setup.py reader/__init__.py -->
