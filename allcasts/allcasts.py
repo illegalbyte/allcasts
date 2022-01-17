@@ -40,7 +40,7 @@ class AllCasts:
 		podcast_dict = AllCasts.podcast_dict(feed_url)
 		episode_title = podcast_dict['rss']['channel']['item'][episode_number]['title']
 		file_name = f"{episode_title}.mp3"
-		AllCasts.download_podcast(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
+		AllCasts.download_episodes(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
 		print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		print(f"\n{col.Fore.BLUE}--> 🎉 Podcast downloaded!{col.Fore.RESET}")
 
@@ -64,7 +64,7 @@ class AllCasts:
 				file_name = f"{episode_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
 				if episode_number >= start_number and episode_number <= end_number:
-					AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
+					AllCasts.download_episodes(episode['enclosure']['@url'], directory, file_name)
 					print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		# if no episode tags are present, download episodes based on their order in the feed
 		else:
@@ -74,18 +74,12 @@ class AllCasts:
 				file_name = episode['enclosure']['@url'].split('/')[-1]
 				# remove all text after '?' in the filename
 				file_name = file_name.split('?')[0]
-				AllCasts.download_podcast(episode['enclosure']['@url'], directory, file_name)
+				AllCasts.download_episodes(episode['enclosure']['@url'], directory, file_name)
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
-				# transcribe the podcast episode
-				transcribed_text = transcribe(path.join(directory, file_name))
-				# create new text file with the transcribed text
-				transcribed_file = open(path.join(directory, f"{file_name}.txt"), "w")
-				transcribed_file.write(transcribed_text)
-				transcribed_file.close()
 
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
-	def download_podcast(episode_url, directory, filename):
+	def download_episodes(episode_url, directory, filename):
 		'''
 		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
 		'''	
@@ -93,7 +87,7 @@ class AllCasts:
 		wget.download(episode_url, out=directory, bar=wget.bar_thermometer)
 		# TODO: rename files to the title of the podcast episode with datestamp
 
-	def download_all_podcasts(feed_url, directory):
+	def download_all_episodes(feed_url, directory, transcribe=False):
 		'''
 		download all podcasts from the rss feed url and save them to the directory
 		'''
@@ -102,8 +96,10 @@ class AllCasts:
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
 			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_podcast(item['enclosure']['@url'], directory, file_name)
+			AllCasts.download_episodes(item['enclosure']['@url'], directory, file_name)
 			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+			if transcribe:
+				transcribe(directory, file_name)
 		print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
 
 	def create_directory(directory):
@@ -120,7 +116,7 @@ class AllCasts:
 		'''
 		with open(file_path, 'r') as file:
 			for line in file:
-				AllCasts.download_all_podcasts(line, directory)
+				AllCasts.download_all_episodes(line, directory)
 
 	def itunes_search_cli():
 		'''
@@ -142,12 +138,28 @@ class AllCasts:
 			print(f"\n{col.Fore.RED}Error: No podcasts found!{col.Fore.RESET}")
 			sys.exit(1)
 
+	def transcribe_episode(mp3_file_path):
+		'''
+		Transcripe an MP3 file to text and write it to a file in the same directory as the MP3 file
+		ATP303.mp3 -> ATP303.txt
+		'''
+		# get the name of the MP3 file without filename extension
+		file_name = mp3_file_path.split('/')[-1][:-4]
+		# get the path of the directory the MP3 file is in
+		directory = mp3_file_path.split('/')[:-1]
+		print(f"\n{col.Fore.GREEN}✍️ Transcribing {file_name}...{col.Fore.RESET}")
+		# transcribe the podcast episode
+		transcribed_text = transcribe(mp3_file_path)
+		# create new text file with the transcribed text
+		transcribed_file = open(path.join(directory, f"{file_name}.txt"), "w")
+		transcribed_file.write(transcribed_text)
+		transcribed_file.close()
+
 def main():
 	'''
 	The main function will check for arguments, validate them, and call the appropriate function 
-	OR if no arguments are passed, it will prompt the user for the required information
+	OR if no arguments are passed, it will prompt the user for the required parameters
 	'''
-
 	# if arguments are passed, parse them:
 	if len(sys.argv) > 1:
 		# create the parser
@@ -157,6 +169,7 @@ def main():
 		mutually_exclusive.add_argument("-f", "--feed", help="the url of the podcast feed", type=str, metavar="<URL>")
 		mutually_exclusive.add_argument("-i", "--input", help="the input file containing a list of podcast feeds", type=str, metavar="<FILE>")
 		parser.add_argument("-d", "--directory", help="the directory to save the podcast episodes", required=False, type=str, metavar="<DIRECTORY>")
+		parser.add_argument("-t", "--transcribe", help="transcribe the podcast episodes to text", action="store_true")
 		parser.add_argument("-s", "--start", help="the number of the first episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-e", "--end", help="the number of the last episode to download", type=int, metavar="<NUMBER>")
 		parser.add_argument("-a", "--all", help="download all episodes", action="store_true", required=False)
@@ -175,11 +188,11 @@ def main():
 		else:
 			directory = os.getcwd()
 		if args.all:
-			AllCasts.download_all_podcasts(args.feed, directory)
+			AllCasts.download_all_episodes(args.feed, directory, transcribe=args.transcribe)
 		elif args.start and args.end:
-			AllCasts.download_episode_range(args.feed, directory, args.start, args.end)
+			AllCasts.download_episode_range(args.feed, directory, args.start, args.end, transcribe=args.transcribe)
 		elif args.number:
-			AllCasts.download_episode_range(args.feed, directory, args.number, args.number)
+			AllCasts.download_episode_range(args.feed, directory, args.number, args.number, transcribe=args.transcribe)
 		elif args.version:
 			print(f"{col.Fore.BLUE}AllCasts v {col.Fore.RESET}")
 		elif args.input:
@@ -200,7 +213,7 @@ def main():
 			feed_url = AllCasts.itunes_search_cli()
 			download_mode = pyip.inputMenu(choices=['Download all episodes', 'Download a specific episode', 'Download an episode range', 'Quit'], prompt='Which would you like to do?\n', numbered=True)
 			if download_mode == 'Download all episodes':
-				AllCasts.download_all_podcasts(feed_url, os.getcwd())
+				AllCasts.download_all_episodes(feed_url, os.getcwd())
 			elif download_mode == 'Download a specific episode':
 				episode_number = pyip.inputInt(prompt='Enter the episode number: ')
 				AllCasts.download_episode_range(feed_url, os.getcwd(), episode_number, episode_number)
@@ -220,7 +233,7 @@ def main():
 			print(f"Downloading all podcasts from {pod_url} to {download_dir}")
 			# download the podcast
 			try:
-				AllCasts.download_all_podcasts(pod_url, download_dir)
+				AllCasts.download_all_episodes(pod_url, download_dir)
 			except KeyboardInterrupt:
 				sys.exit()
 		sys.exit()
