@@ -40,7 +40,7 @@ class AllCasts:
 		podcast_dict = AllCasts.podcast_dict(feed_url)
 		episode_title = podcast_dict['rss']['channel']['item'][episode_number]['title']
 		file_name = f"{episode_title}.mp3"
-		AllCasts.download_episodes(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
+		AllCasts.download_episode(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
 		print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		print(f"\n{col.Fore.BLUE}--> 🎉 Podcast downloaded!{col.Fore.RESET}")
 
@@ -64,7 +64,7 @@ class AllCasts:
 				file_name = f"{episode_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
 				if episode_number >= start_number and episode_number <= end_number:
-					AllCasts.download_episodes(episode['enclosure']['@url'], directory, file_name)
+					AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
 					print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		# if no episode tags are present, download episodes based on their order in the feed
 		else:
@@ -74,12 +74,12 @@ class AllCasts:
 				file_name = episode['enclosure']['@url'].split('/')[-1]
 				# remove all text after '?' in the filename
 				file_name = file_name.split('?')[0]
-				AllCasts.download_episodes(episode['enclosure']['@url'], directory, file_name)
+				AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
-	def download_episodes(episode_url, directory, filename):
+	def download_episode(episode_url, directory, filename):
 		'''
 		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
 		'''	
@@ -96,10 +96,10 @@ class AllCasts:
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
 			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_episodes(item['enclosure']['@url'], directory, file_name)
-			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET}")
+			AllCasts.download_episode(item['enclosure']['@url'], directory, file_name)
+			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET} as {col.Fore.BLUE}{file_name}{col.Fore.RESET}")
 			if transcribe:
-				transcribe(directory, file_name)
+				AllCasts.transcribe_episode(path.join(directory, file_name))
 		print(f"\n{col.Fore.BLUE}--> 🎉 All podcasts downloaded!{col.Fore.RESET}")
 
 	def create_directory(directory):
