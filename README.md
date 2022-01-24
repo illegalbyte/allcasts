@@ -41,17 +41,20 @@ Downloading https://traffic.libsyn.com/atpfm/atp461.mp3
 
 Allcasts supports a variety of command line arguments. To display help message below use `allcasts -h`
 
-```
-usage: allcasts.py [-h] [-d <DIRECTORY>] -f <URL> [-s <NUMBER>] [-e <NUMBER>] [-a] [-n <NUMBER>]
+```bash
+usage: allcasts.py [-h] (-f <URL> | -i <FILE>) [-d <DIRECTORY>] [-t] [-s <NUMBER>] [-e <NUMBER>] [-a] [-n <NUMBER>] [-l] [-v]
 
 A friendly command line podcast downloader - supports downloading entire feeds, individual episodes, and a range of episodes
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d <DIRECTORY>, --directory <DIRECTORY>
-                        the directory to save the podcast episodes
   -f <URL>, --feed <URL>
                         the url of the podcast feed
+  -i <FILE>, --input <FILE>
+                        the input file containing a list of podcast feeds
+  -d <DIRECTORY>, --directory <DIRECTORY>
+                        the directory to save the podcast episodes
+  -t, --transcribe      transcribe the podcast episodes to text
   -s <NUMBER>, --start <NUMBER>
                         the number of the first episode to download
   -e <NUMBER>, --end <NUMBER>
@@ -59,26 +62,40 @@ optional arguments:
   -a, --all             download all episodes
   -n <NUMBER>, --number <NUMBER>
                         download a specific episode
+  -l, --latest          download the latest episode
+  -v, --version         display the version number
 ```
 
-#### Example Commands: 
+#### Example Commands
 
-**Download episodes 100 to 120**
+* **Download episodes 100 to 120**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -s 100 -e 120
 ```
 
-**Download all episodes of a podcast**
+* **Download all episodes of a podcast**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -a
 ```
 
-**Download episode 200**
+* **Download episode 200**
 
 ```bash
 allcasts -f "https://atp.fm/rss" -n 100
+```
+
+* **Download a list of RSS feeds**
+
+```bash
+allcasts -i "podcast_feeds.txt"
+```
+
+* **Transcribe downloaded episodes to a txt file for keyword searching**
+
+```bash
+allcasts -f "https://atp.fm/rss" -t
 ```
 
 ### As a Python module
@@ -93,14 +110,15 @@ AllCasts.download_all('https://atp.fm/rss', '/Users/lewis/Documents/Python-Proje
 
 ### Limitations
 
-- Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
-
+* Private Patreon RSS feeds are not currently supported due to their strange DRM measures. 
 
 ## Todo
 
-- [X] Add support for downloading multiple podcasts at once.
-- [X] Add support for command line arguments.
-- [X] Add itunes API support to search for podcasts and select the correct feed.
+* [X] Add audio transcription using [speech_recognition module](https://github.com/Uberi/speech_recognition)
+* [ ] Add support for private [Patreon RSS feeds](https://www.patreon.com/posts/podcast-feed-for-patrons-on-patreon)
+* [X] Add support for downloading multiple podcasts at once.
+* [X] Add support for command line arguments.
+* [X] Add itunes API support to search for podcasts and select the correct feed.
 
 <!-- https://realpython.com/pypi-publish-python-package/ -->
 <!-- $ bumpversion --current-version 1.0.0 minor setup.py reader/__init__.py -->

@@ -14,7 +14,7 @@ HERE = pathlib.Path(__file__).parent
 
 README = (HERE / "README.md").read_text()
 VERSION = '0.2.0'
-REQUIREMENTS = ["PyInputPlus", "wget", "xmltodict", "colorama", "argparse"]
+REQUIREMENTS = ["PyInputPlus", "wget", "xmltodict", "colorama", "argparse", "SpeechRecognition"]
 
 setup(
         name='allcasts',    # This is the name of your PyPI-package.

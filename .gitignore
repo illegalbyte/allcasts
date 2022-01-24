@@ -135,3 +135,5 @@ rss.xml
 sample_itunes_api_response.json
 *.xml
 *.tmp
+*.wav
+pocketsphinx-python/
