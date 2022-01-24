@@ -2,6 +2,10 @@ from allcasts import AllCasts
 import unittest
 import os
 
+# test feeds:
+# redscare podcast
+# http://redscarepodcast.libsyn.com/rss
+
 class TestAllCasts(unittest.TestCase):
 	def test_allcasts_installed(self):
 		'''
