@@ -18,7 +18,6 @@ import wget
 import xmltodict
 from pprint import pprint
 from itunes_API import ItunesAPI
-from transcribe import transcribe
 
 # initialise colorama (required for Windows)
 col.init()
@@ -76,7 +75,6 @@ class AllCasts:
 				file_name = file_name.split('?')[0]
 				AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
-
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
 	def download_episode(episode_url, directory, filename):
