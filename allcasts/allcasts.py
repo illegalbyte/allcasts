@@ -19,8 +19,8 @@ import xmltodict
 from pprint import pprint
 from itunes_API import ItunesAPI
 
-# initialise colorama (required for Windows)
-col.init()
+
+col.init()  # initialise colorama (required for Windows)
 
 class AllCasts:
 
@@ -77,15 +77,18 @@ class AllCasts:
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
-	def download_episode(episode_url, directory, filename):
+	def download_episode(episode_url, filepath: str): 
 		'''
 		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
+
+		filepath -> /path/to/directory/episode.mp3
 		'''	
 		print(f"Downloading {episode_url}...")
-		wget.download(episode_url, out=directory, bar=wget.bar_thermometer)
+		wget.download(episode_url, out=filepath, bar=wget.bar_thermometer)
 		# TODO: rename files to the title of the podcast episode with datestamp
 
-	def download_all_episodes(feed_url, directory, transcribe=False):
+
+	def download_all_episodes(feed_url: str, directory: str, transcribe=False):
 		'''
 		download all podcasts from the rss feed url and save them to the directory
 		'''
@@ -94,7 +97,7 @@ class AllCasts:
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
 			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_episode(item['enclosure']['@url'], directory, file_name)
+			AllCasts.download_episode(item['enclosure']['@url'], str(directory + file_name))
 			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET} as {col.Fore.BLUE}{file_name}{col.Fore.RESET}")
 			if transcribe:
 				AllCasts.transcribe_episode(path.join(directory, file_name))
