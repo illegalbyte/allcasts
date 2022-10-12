@@ -63,7 +63,7 @@ class AllCasts:
 				file_name = f"{episode_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
 				if episode_number >= start_number and episode_number <= end_number:
-					AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
+					AllCasts.download_episode(episode['enclosure']['@url'], directory)
 					print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		# if no episode tags are present, download episodes based on their order in the feed
 		else:
