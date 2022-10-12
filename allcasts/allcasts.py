@@ -73,7 +73,7 @@ class AllCasts:
 				file_name = episode['enclosure']['@url'].split('/')[-1]
 				# remove all text after '?' in the filename
 				file_name = file_name.split('?')[0]
-				AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
+				AllCasts.download_episode(episode['enclosure']['@url'], directory)
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
