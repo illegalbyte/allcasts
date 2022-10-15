@@ -1,6 +1,17 @@
+args==0.1.0
+blessed==1.19.1
+certifi==2022.9.24
+charset-normalizer==2.1.1
 colorama==0.4.4
+idna==3.4
+prefixed==0.3.2
 PyInputPlus==0.2.12
 PySimpleValidate==0.2.12
+requests==2.28.1
+six==1.16.0
 stdiomask==0.0.6
+tqdm==4.64.1
+urllib3==1.26.12
+wcwidth==0.2.5
 wget==3.2
 xmltodict==0.12.0

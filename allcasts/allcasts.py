@@ -10,11 +10,11 @@ import os
 import urllib
 from os import path
 import sys
-
+import tqdm
 import argparse
 import colorama as col
 import pyinputplus as pyip
-import wget
+
 import xmltodict
 from pprint import pprint
 from itunes_API import ItunesAPI
@@ -24,6 +24,36 @@ col.init()  # initialise colorama (required for Windows)
 
 class AllCasts:
 
+	def download(url, filepath):
+		'''
+		download a file from a url and save it to the current directory
+
+		filepath -> /path/to/directory/episode.mp3
+		url -> https://example.com/episode.mp3
+		'''
+		import functools
+		import pathlib
+		import shutil
+		import requests
+		import tqdm
+		
+		r = requests.get(url, stream=True, allow_redirects=True)
+		if r.status_code != 200:
+			r.raise_for_status()  # Will only raise for 4xx codes, so...
+			raise RuntimeError(f"Request to {url} returned status code {r.status_code}")
+		file_size = int(r.headers.get('Content-Length', 0))
+
+		path = pathlib.Path(filepath).expanduser().resolve()
+		path.parent.mkdir(parents=True, exist_ok=True)
+
+		desc = "(Unknown total file size)" if file_size == 0 else ""
+		r.raw.read = functools.partial(r.raw.read, decode_content=True)  # Decompress if needed
+		with tqdm.tqdm.wrapattr(r.raw, "read", total=file_size, desc=desc) as r_raw:
+			with path.open("wb") as f:
+				shutil.copyfileobj(r_raw, f)
+
+		return path
+
 	def podcast_dict(url):
 		'''
 		returns a dictionary of the podcast feed
@@ -32,7 +62,7 @@ class AllCasts:
 			podcast_dict = xmltodict.parse(response.read())
 		return podcast_dict
 
-	def download_episode(feed_url, directory, episode_number):
+	def download_episode_number(feed_url, directory, episode_number):
 		'''
 		download a specific podcast episode from the rss feed url and save it to the directory
 		'''
@@ -63,7 +93,7 @@ class AllCasts:
 				file_name = f"{episode_title}.mp3"
 				episode_number = int(episode['itunes:episode'])
 				if episode_number >= start_number and episode_number <= end_number:
-					AllCasts.download_episode(episode['enclosure']['@url'], directory)
+					AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
 					print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 		# if no episode tags are present, download episodes based on their order in the feed
 		else:
@@ -73,20 +103,19 @@ class AllCasts:
 				file_name = episode['enclosure']['@url'].split('/')[-1]
 				# remove all text after '?' in the filename
 				file_name = file_name.split('?')[0]
-				AllCasts.download_episode(episode['enclosure']['@url'], directory)
+				AllCasts.download_episode(episode['enclosure']['@url'], directory, file_name)
 				print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
 			print(f"\n{col.Fore.BLUE}--> 🎉 All podcast episodes downloaded!{col.Fore.RESET}")
 
-	def download_episode(episode_url, filepath: str): 
+	def download_episode(episode_url, filepath: str, filename="UNKNOWN"): 
 		'''
 		download the podcast episode from the individual episode's url (NOT the RSS feed url) and save it to the directory
 
 		filepath -> /path/to/directory/episode.mp3
 		'''	
 		print(f"Downloading {episode_url}...")
-		wget.download(episode_url, out=filepath, bar=wget.bar_thermometer)
-		# TODO: rename files to the title of the podcast episode with datestamp
-
+		AllCasts.download(episode_url, str(filepath+"/"+filename))
+		print(f"\n{col.Fore.GREEN}🎧 Downloaded {filename} to {filepath}{col.Fore.RESET}")
 
 	def download_all_episodes(feed_url: str, directory: str, transcribe=False):
 		'''
@@ -97,7 +126,7 @@ class AllCasts:
 		for item in podcast_dict['rss']['channel']['item']:
 			podcast_title = item['title']
 			file_name = f"{podcast_title}.mp3"
-			AllCasts.download_episode(item['enclosure']['@url'], str(directory + file_name))
+			AllCasts.download_episode(item['enclosure']['@url'], directory, file_name)
 			print(f"\n{col.Fore.GREEN}🎧 Downloaded {podcast_title}{col.Fore.RESET} as {col.Fore.BLUE}{file_name}{col.Fore.RESET}")
 			if transcribe:
 				AllCasts.transcribe_episode(path.join(directory, file_name))
@@ -144,17 +173,7 @@ class AllCasts:
 		Transcripe an MP3 file to text and write it to a file in the same directory as the MP3 file
 		ATP303.mp3 -> ATP303.txt
 		'''
-		# get the name of the MP3 file without filename extension
-		file_name = mp3_file_path.split('/')[-1][:-4]
-		# get the path of the directory the MP3 file is in
-		directory = mp3_file_path.split('/')[:-1]
-		print(f"\n{col.Fore.GREEN}✍️ Transcribing {file_name}...{col.Fore.RESET}")
-		# transcribe the podcast episode
-		transcribed_text = transcribe(mp3_file_path)
-		# create new text file with the transcribed text
-		transcribed_file = open(path.join(directory, f"{file_name}.txt"), "w")
-		transcribed_file.write(transcribed_text)
-		transcribed_file.close()
+		#TODO: implement whisper
 
 def main():
 	'''
