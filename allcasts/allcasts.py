@@ -5,7 +5,7 @@ allcasts allows you to batch download podcasts from a given RSS feed.
 allcasts can download all episodes, a range of episodes, or a specific episode.
 Get started by running allcasts with no arguments or with the --help argument.
 '''
-__version__ = '0.1.6'
+__version__ = '0.1.9'
 import os
 import urllib
 from os import path
@@ -14,7 +14,6 @@ import tqdm
 import argparse
 import colorama as col
 import pyinputplus as pyip
-
 import xmltodict
 from pprint import pprint
 from itunes_API import ItunesAPI
@@ -26,7 +25,7 @@ class AllCasts:
 
 	def download(url, filepath):
 		'''
-		download a file from a url and save it to the current directory
+		download a file from a url and save it to the filepath. Filepath must incllude filename. 
 
 		filepath -> /path/to/directory/episode.mp3
 		url -> https://example.com/episode.mp3
@@ -56,22 +55,11 @@ class AllCasts:
 
 	def podcast_dict(url):
 		'''
-		returns a dictionary of the podcast feed
+		returns a dictionary of the podcast feed from the given url
 		'''
 		with urllib.request.urlopen(url) as response:
 			podcast_dict = xmltodict.parse(response.read())
 		return podcast_dict
-
-	def download_episode_number(feed_url, directory, episode_number):
-		'''
-		download a specific podcast episode from the rss feed url and save it to the directory
-		'''
-		podcast_dict = AllCasts.podcast_dict(feed_url)
-		episode_title = podcast_dict['rss']['channel']['item'][episode_number]['title']
-		file_name = f"{episode_title}.mp3"
-		AllCasts.download_episode(podcast_dict['rss']['channel']['item'][episode_number]['enclosure']['@url'], directory, file_name)		
-		print(f"\n{col.Fore.GREEN}🎧 Downloaded {episode_title}{col.Fore.RESET}")
-		print(f"\n{col.Fore.BLUE}--> 🎉 Podcast downloaded!{col.Fore.RESET}")
 
 	def download_episode_range(feed_url, directory, start_number, end_number):
 		'''
