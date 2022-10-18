@@ -8,6 +8,13 @@ import logging
 WHISPER_MODEL = "base.en"
 LANGUAGE = "English"
 
+# ask for directory
+directory = input("Enter directory of audio files: ")
+# verify directory
+if not os.path.isdir(directory):
+    logging.critical("Directory not found.")
+    sys.exit()
+
 # get a list of .mp3, .wav, and .m4a files in the current directory
 files = [f for f in os.listdir(".") if f.endswith((".mp3", ".wav", ".m4a"))]
 # get a list of .txt files in the current directory
