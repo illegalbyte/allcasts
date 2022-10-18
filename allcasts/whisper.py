@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 # confirm directory exists
 if not os.path.isdir(DIRECTORY):
-    logging.error("Directory does not exist.")
+    print("Directory does not exist.")
     sys.exit()
 
 
@@ -29,7 +29,7 @@ for file in files:
         logging.info(f"Skipping {file} because it has already been transcribed.")
         continue
     logging.info(f"Transcribing {file}")
-    # execute whisper command
-    subprocess.run(["whisper", DIRECTORY, "--model", WHISPER_MODEL, "--language", LANGUAGE])
+    # execute whisper command and print output
+    subprocess.run(["whisper", file, "--model", WHISPER_MODEL, "--language", LANGUAGE])
     logging.info(f"Transcription complete for {file}")
 
