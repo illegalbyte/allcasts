@@ -7,13 +7,16 @@ import logging
 
 WHISPER_MODEL = "base.en"
 LANGUAGE = "English"
+DIRECTORY = "../patreon_downloader/redscare/"
 
-# ask for directory
-directory = input("Enter directory of audio files: ")
-# verify directory
-if not os.path.isdir(directory):
-    logging.critical("Directory not found.")
+# start logging 
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+# confirm directory 
+if not os.path.isdir(DIRECTORY):
+    logging.error("Directory does not exist.")
     sys.exit()
+
 
 # get a list of .mp3, .wav, and .m4a files in the current directory
 files = [f for f in os.listdir(".") if f.endswith((".mp3", ".wav", ".m4a"))]
@@ -27,6 +30,6 @@ for file in files:
         continue
     logging.info(f"Transcribing {file}")
     # execute whisper command
-    subprocess.run(["whisper", "--model", WHISPER_MODEL, "--language", LANGUAGE])
+    subprocess.run(["whisper", DIRECTORY, "--model", WHISPER_MODEL, "--language", LANGUAGE])
     logging.info(f"Transcription complete for {file}")
 
