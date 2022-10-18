@@ -7,12 +7,12 @@ import logging
 
 WHISPER_MODEL = "base.en"
 LANGUAGE = "English"
-DIRECTORY = "../patreon_downloader/redscare/"
+DIRECTORY = "/home/lewis/Projects/podwhisper/allcasts/patreon_downloader/redscare"
 
 # start logging 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-# confirm directory 
+# confirm directory exists
 if not os.path.isdir(DIRECTORY):
     logging.error("Directory does not exist.")
     sys.exit()
