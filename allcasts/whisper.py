@@ -30,6 +30,6 @@ for file in files:
         continue
     logging.info(f"Transcribing {file}")
     # execute whisper command and print output
-    subprocess.run(["whisper", file, "--model", WHISPER_MODEL, "--language", LANGUAGE])
+    print(subprocess.run(["whisper", file, "--model", WHISPER_MODEL, "--language", LANGUAGE]))
     logging.info(f"Transcription complete for {file}")
 
